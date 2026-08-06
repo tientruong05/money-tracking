@@ -4,16 +4,21 @@ import { ArrowLeftRight } from "lucide-react";
 import { CategoryIcon } from "@/components/categories/category-icon";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { MONTHLY_BILL_CATEGORY_NAMES } from "@/lib/types";
 import { useTransactionSheet } from "./transaction-sheet-context";
 import type { EnrichedTransaction } from "@/hooks/use-transactions";
 
 export function TransactionListItem({ tx, showDate = false }: { tx: EnrichedTransaction; showDate?: boolean }) {
   const { openEdit } = useTransactionSheet();
 
+  const isMonthlyBill = MONTHLY_BILL_CATEGORY_NAMES.includes(
+    tx.category?.name as (typeof MONTHLY_BILL_CATEGORY_NAMES)[number]
+  );
+
   const title =
     tx.type === "transfer"
       ? tx.description || "Chuyển khoản"
-      : tx.is_free_meal
+      : tx.is_free_meal || isMonthlyBill
         ? (tx.category?.name ?? "Giao dịch")
         : tx.description && tx.category
           ? `${tx.description} (${tx.category.name})`

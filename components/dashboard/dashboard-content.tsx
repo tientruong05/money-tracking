@@ -6,6 +6,7 @@ import { useTotalAssets } from "@/hooks/use-wallets";
 import { useTransactions } from "@/hooks/use-transactions";
 import { useBudgetProgress } from "@/hooks/use-budget";
 import { formatCurrency, todayIsoDate } from "@/lib/format";
+import { MONTHLY_BILL_CATEGORY_NAMES } from "@/lib/types";
 import { TransactionList } from "@/components/transactions/transaction-list";
 import { BudgetProgressItem } from "@/components/budget/budget-progress-item";
 import { AnimatedNumber } from "@/components/ui/animated-number";
@@ -28,8 +29,14 @@ export function DashboardContent() {
   const weekExpenses = useTransactions({ startDate: weekStart, endDate: today });
   const budgetProgress = useBudgetProgress();
 
-  const todaySpent = todayExpenses?.filter((t) => t.type === "expense").reduce((sum, t) => sum + t.amount, 0) ?? 0;
-  const weekSpent = weekExpenses?.filter((t) => t.type === "expense").reduce((sum, t) => sum + t.amount, 0) ?? 0;
+  const todaySpent =
+    todayExpenses
+      ?.filter((t) => t.type === "expense" && !MONTHLY_BILL_CATEGORY_NAMES.includes(t.category?.name as (typeof MONTHLY_BILL_CATEGORY_NAMES)[number]))
+      .reduce((sum, t) => sum + t.amount, 0) ?? 0;
+  const weekSpent =
+    weekExpenses
+      ?.filter((t) => t.type === "expense" && !MONTHLY_BILL_CATEGORY_NAMES.includes(t.category?.name as (typeof MONTHLY_BILL_CATEGORY_NAMES)[number]))
+      .reduce((sum, t) => sum + t.amount, 0) ?? 0;
 
   return (
     <div className="flex flex-col gap-6 min-w-0">

@@ -24,6 +24,9 @@ export const FREE_MEAL_CATEGORY_IDS = [
   "cat-an-xe",
 ] as const;
 
+/** Category names whose expenses should be excluded from daily/weekly spending totals (e.g. monthly bills). */
+export const MONTHLY_BILL_CATEGORY_NAMES = ["Thuê trọ"] as const;
+
 export interface Category {
   id: string;
   name: string;

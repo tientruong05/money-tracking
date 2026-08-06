@@ -19,7 +19,7 @@ import { useWalletsWithBalance } from "@/hooks/use-wallets";
 import { addTransaction, deleteTransaction, transferBetweenWallets, updateTransaction } from "@/lib/mutations";
 import { notifySaved } from "@/lib/save-toast";
 import { todayIsoDate } from "@/lib/format";
-import { FREE_MEAL_CATEGORY_IDS } from "@/lib/types";
+import { FREE_MEAL_CATEGORY_IDS, MONTHLY_BILL_CATEGORY_NAMES } from "@/lib/types";
 import type { TransactionType } from "@/lib/types";
 
 type Step = "category" | "meal-choice" | "form";
@@ -269,10 +269,12 @@ export function AddTransactionSheet() {
               </Select>
             </div>
 
+            {!MONTHLY_BILL_CATEGORY_NAMES.includes(selectedCategory?.name as (typeof MONTHLY_BILL_CATEGORY_NAMES)[number]) && (
             <div className="space-y-1.5">
               <Label htmlFor="tx-desc">Mô tả</Label>
               <Input id="tx-desc" className="h-11" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="VD: Cà phê sáng" />
             </div>
+            )}
 
             <div className="space-y-1.5">
               <Label htmlFor="tx-date">Ngày</Label>
