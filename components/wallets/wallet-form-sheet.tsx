@@ -55,7 +55,12 @@ export function WalletFormSheet({ open, onOpenChange, wallet }: WalletFormSheetP
     };
 
     if (isEdit && wallet) {
-      await updateWallet(wallet.id, payload);
+      await updateWallet(wallet.id, {
+        name: payload.name,
+        type: payload.type,
+        color: payload.color,
+        icon: payload.icon,
+      });
     } else {
       await addWallet(payload);
     }
@@ -128,6 +133,7 @@ export function WalletFormSheet({ open, onOpenChange, wallet }: WalletFormSheetP
             inputMode="decimal"
             value={initialBalance}
             onChange={(e) => setInitialBalance(e.target.value)}
+            disabled={isEdit}
           />
         </div>
 

@@ -2,6 +2,7 @@
 
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
+import { FREE_MEAL_CATEGORY_IDS } from "@/lib/types";
 import type { Category } from "@/lib/types";
 
 function pad2(n: number): string {
@@ -36,15 +37,37 @@ export function useCategoryBreakdown(monthDate: Date = new Date()): CategoryBrea
     const categoryMap = new Map(categories.map((c) => [c.id, c]));
 
     const totals = new Map<string, number>();
+    let foodTotal = 0;
+    let foodCategory: Category | null = null;
+
     for (const t of txs) {
       if (!t.category_id) continue;
-      totals.set(t.category_id, (totals.get(t.category_id) ?? 0) + t.amount);
+      if (FREE_MEAL_CATEGORY_IDS.includes(t.category_id as (typeof FREE_MEAL_CATEGORY_IDS)[number])) {
+        foodTotal += t.amount;
+        if (!foodCategory) foodCategory = categoryMap.get(t.category_id) ?? null;
+      } else {
+        totals.set(t.category_id, (totals.get(t.category_id) ?? 0) + t.amount);
+      }
+    }
+
+    if (foodTotal > 0 && foodCategory) {
+      totals.set("cat-an", foodTotal);
     }
 
     const grandTotal = [...totals.values()].reduce((sum, v) => sum + v, 0);
 
     const items: CategoryBreakdownItem[] = [...totals.entries()]
       .map(([categoryId, amount]) => {
+        if (categoryId === "cat-an") {
+          const merged: Category = {
+            ...foodCategory!,
+            id: "cat-an",
+            name: "Ăn",
+            icon: "UtensilsCrossed",
+            color: "#F97316",
+          };
+          return { category: merged, amount, percent: grandTotal > 0 ? (amount / grandTotal) * 100 : 0 };
+        }
         const category = categoryMap.get(categoryId);
         if (!category) return null;
         return { category, amount, percent: grandTotal > 0 ? (amount / grandTotal) * 100 : 0 };

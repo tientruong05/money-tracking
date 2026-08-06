@@ -20,14 +20,14 @@ export function TransactionFiltersBar({
   const categories = useCategories({ includeHidden: true });
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+    <div className="grid grid-cols-1 gap-3 min-[400px]:grid-cols-2 sm:grid-cols-4">
       <div className="min-w-0 space-y-1">
         <Label className="text-xs text-muted-foreground">Ví</Label>
         <Select
           value={filters.walletId ?? ALL}
           onValueChange={(v) => onChange({ ...filters, walletId: v === ALL || v === null ? undefined : v })}
         >
-          <SelectTrigger className="w-full min-w-0">
+          <SelectTrigger className="h-11 w-full min-w-0">
             <SelectValue>
               {(v: string | null) => (v === ALL || !v ? "Tất cả ví" : (wallets?.find((w) => w.id === v)?.name ?? "Tất cả ví"))}
             </SelectValue>
@@ -49,7 +49,7 @@ export function TransactionFiltersBar({
           value={filters.categoryId ?? ALL}
           onValueChange={(v) => onChange({ ...filters, categoryId: v === ALL || v === null ? undefined : v })}
         >
-          <SelectTrigger className="w-full min-w-0">
+          <SelectTrigger className="h-11 w-full min-w-0">
             <SelectValue>
               {(v: string | null) =>
                 v === ALL || !v ? "Tất cả danh mục" : (categories?.find((c) => c.id === v)?.name ?? "Tất cả danh mục")
@@ -71,7 +71,7 @@ export function TransactionFiltersBar({
         <Label className="text-xs text-muted-foreground">Từ ngày</Label>
         <Input
           type="date"
-          className="px-2 text-xs md:text-xs"
+          className="h-11"
           value={filters.startDate ?? ""}
           onChange={(e) => onChange({ ...filters, startDate: e.target.value || undefined })}
         />
@@ -81,7 +81,7 @@ export function TransactionFiltersBar({
         <Label className="text-xs text-muted-foreground">Đến ngày</Label>
         <Input
           type="date"
-          className="px-2 text-xs md:text-xs"
+          className="h-11"
           value={filters.endDate ?? ""}
           onChange={(e) => onChange({ ...filters, endDate: e.target.value || undefined })}
         />
