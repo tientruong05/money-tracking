@@ -43,6 +43,7 @@ export function AddTransactionSheet() {
   const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   const selectedCategory = useCategory(categoryId);
+  const isEditingFreeMeal = Boolean(editing?.is_free_meal);
 
   useEffect(() => {
     if (!open) return;
@@ -143,6 +144,23 @@ export function AddTransactionSheet() {
       toast.error("Chọn danh mục");
       return;
     }
+
+    if (isEditingFreeMeal) {
+      await updateTransaction(editing!.id, {
+        wallet_id: null,
+        category_id: categoryId,
+        type,
+        amount: 0,
+        description: description.trim(),
+        date,
+        is_free_meal: true,
+        to_wallet_id: null,
+      });
+      notifySaved();
+      close();
+      return;
+    }
+
     if (!walletId) {
       toast.error("Chọn ví");
       return;
@@ -251,25 +269,27 @@ export function AddTransactionSheet() {
               </button>
             )}
 
-            <AmountKeypad value={amount} onChange={setAmount} />
+            {!isEditingFreeMeal && <AmountKeypad value={amount} onChange={setAmount} />}
 
-            <div className="space-y-1.5">
-              <Label>Ví</Label>
-              <Select value={walletId} onValueChange={setWalletId}>
-                <SelectTrigger className="w-full">
-                  <SelectValue>{(v: string | null) => wallets?.find((w) => w.id === v)?.name ?? "Chọn ví"}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {wallets?.map((w) => (
-                    <SelectItem key={w.id} value={w.id}>
-                      {w.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {!isEditingFreeMeal && (
+              <div className="space-y-1.5">
+                <Label>Ví</Label>
+                <Select value={walletId} onValueChange={setWalletId}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue>{(v: string | null) => wallets?.find((w) => w.id === v)?.name ?? "Chọn ví"}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {wallets?.map((w) => (
+                      <SelectItem key={w.id} value={w.id}>
+                        {w.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
-            {!MONTHLY_BILL_CATEGORY_NAMES.includes(selectedCategory?.name as (typeof MONTHLY_BILL_CATEGORY_NAMES)[number]) && (
+            {!isEditingFreeMeal && !MONTHLY_BILL_CATEGORY_NAMES.includes(selectedCategory?.name as (typeof MONTHLY_BILL_CATEGORY_NAMES)[number]) && (
             <div className="space-y-1.5">
               <Label htmlFor="tx-desc">Mô tả</Label>
               <Input id="tx-desc" className="h-11" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="VD: Cà phê sáng" />
