@@ -19,14 +19,14 @@ export function BottomNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-1 flex-col items-center justify-center rounded-full py-1.5 text-[10px] font-medium transition-all duration-200 active:scale-95",
+                "flex flex-1 min-w-0 flex-col items-center justify-center rounded-full py-1.5 px-0.5 text-[10px] font-medium transition-all duration-200 active:scale-95",
                 active
                   ? "bg-primary text-primary-foreground shadow-md shadow-primary/30"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
-              <Icon className="size-5" strokeWidth={active ? 2.5 : 2} />
-              <span className="mt-0.5 leading-tight">{item.label}</span>
+              <Icon className="size-4.5 shrink-0 sm:size-5" strokeWidth={active ? 2.5 : 2} />
+              <span className="mt-0.5 leading-tight truncate max-w-full text-center">{item.label}</span>
             </Link>
           );
         })}
